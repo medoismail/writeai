@@ -53,11 +53,14 @@
 html{scroll-behavior:smooth}
 
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
   color:var(--text-primary);
   background:var(--bg);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  -webkit-text-size-adjust:100%;
+  font-feature-settings:"kern" 1,"liga" 1,"calt" 1;
   line-height:1.6;
   overflow-x:hidden;
 }
@@ -104,11 +107,16 @@ nav .inner{
 
 .logo-icon{
   width:28px;height:28px;
-  background:#7C6CFF;
+  background:var(--accent);
   border-radius:7px;
   display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:13px;color:white;
-  box-shadow:var(--shadow-sm);
+  font-weight:800;font-size:13px;
+  color:#fff;
+  box-shadow:
+    -2px -1px 3px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(90,76,220,0.6),
+    0.5px 0.5px 0.5px rgba(0,0,0,0.3) inset,
+    -0.5px -0.5px 0.5px rgba(255,255,255,0.15) inset;
 }
 
 .logo-text{font-size:14px;font-weight:700;color:var(--text-primary);letter-spacing:-0.01em}
@@ -153,15 +161,10 @@ nav .inner{
   padding:160px 0 80px;
   text-align:center;
   position:relative;
+  overflow:visible;
 }
 
-.hero::before{
-  content:'';position:absolute;top:60px;left:50%;
-  width:600px;height:400px;
-  transform:translateX(-50%);
-  background:radial-gradient(ellipse,rgba(124,108,255,0.08) 0%,transparent 70%);
-  pointer-events:none;
-}
+.hero::before{display:none}
 
 .hero-badge{
   display:inline-flex;align-items:center;gap:6px;
@@ -186,17 +189,20 @@ nav .inner{
 
 .hero h1{
   font-size:clamp(36px,6vw,60px);
-  font-weight:800;
+  font-weight:600;
   letter-spacing:-0.03em;
-  line-height:1.1;
+  line-height:1.08;
   margin-bottom:20px;
   max-width:720px;
   margin-left:auto;margin-right:auto;
+  text-shadow:0 1px 2px rgba(0,0,0,0.2);
 }
 
 .gradient-text{
-  color:var(--accent);
+  color:var(--text-primary);
+  text-shadow:0 1px 2px rgba(0,0,0,0.2);
 }
+
 
 .hero p{
   font-size:clamp(16px,2vw,19px);
@@ -212,202 +218,143 @@ nav .inner{
 
 .btn svg{width:16px;height:16px;flex-shrink:0}
 
-/* ── Hero 3D Keyboard Keys ─── */
+/* ── Hero Keyboard with Frame & Wire ─── */
 
-.hero-keys{
-  display:flex;align-items:center;justify-content:center;
-  gap:12px;margin-bottom:44px;
-  perspective:800px;
+.hero-keyboard-wrap{
+  display:flex;justify-content:center;
+  margin-bottom:40px;
+  position:relative;
+  overflow:visible;
+  z-index:1;
 }
 
+/* ── Cable SVG ─── */
+.hero-cable-svg{
+  position:absolute;
+  top:-160px;left:0;
+  width:100%;height:calc(100% + 160px);
+  pointer-events:none;
+  z-index:0;
+  overflow:visible;
+}
+.hero-cable-body{
+  filter:drop-shadow(1px 0 1px rgba(0,0,0,0.3)) drop-shadow(-1px 0 1px rgba(0,0,0,0.2));
+}
+/* ── Animated dots along cable ─── */
+.hero-cable-dots{
+  position:absolute;
+  top:-160px;left:0;
+  width:100%;height:calc(100% + 160px);
+  pointer-events:none;
+  z-index:0;
+  overflow:visible;
+}
+.hero-cable-dot{
+  width:3px;height:3px;
+  border-radius:50%;
+  background:radial-gradient(circle,#fff 0%,rgba(255,255,255,0.4) 50%,transparent 70%);
+  box-shadow:0 0 4px 1px rgba(255,255,255,0.3),0 0 8px 3px rgba(255,255,255,0.08);
+  opacity:0.7;
+  position:absolute;top:0;left:0;
+  will-change:transform;
+}
+.hero-cable-dot:nth-child(2){opacity:0.5;width:3px;height:3px}
+.hero-cable-dot:nth-child(3){opacity:0.4;width:3px;height:3px}
+.hero-cable-dot:nth-child(4){opacity:0.6}
+
+/* ── Keyboard Frame — Apple liquid glass ─── */
+.hero-keyboard{
+  display:flex;align-items:center;
+  gap:6px;
+  padding:10px 12px;
+  position:relative;
+  z-index:1;
+  border-radius:14px;
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(24px) saturate(1.4);
+  -webkit-backdrop-filter:blur(24px) saturate(1.4);
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.3),
+    0 1px 3px rgba(0,0,0,0.2),
+    0 0 0 0.5px rgba(255,255,255,0.06) inset;
+  cursor:grab;
+  touch-action:none;
+}
+.hero-keyboard.dragging{cursor:grabbing}
+.hero-keyboard.dragging .hero-key{pointer-events:none}
+
+/* ── Individual Keys ─── */
 .hero-key{
   position:relative;
   display:flex;align-items:center;justify-content:center;
-  min-width:64px;height:58px;
-  padding:0 18px;
-  border-radius:14px;
-  font-size:20px;font-weight:600;
-  color:rgba(255,255,255,0.7);
+  min-width:56px;height:50px;
+  padding:0 14px;
+  border-radius:8px;
+  font-size:18px;font-weight:500;
+  color:rgba(255,255,255,0.5);
   cursor:pointer;user-select:none;
-  transform-style:preserve-3d;
-  transform:rotateX(4deg) rotateY(0deg);
-  transition:
-    transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
-    box-shadow 0.18s ease,
-    background 0.18s ease;
+  transition:box-shadow 0.15s ease;
 
-  /* ── Metallic surface ─── */
-  background:
-    /* top shine — bright reflection band */
-    linear-gradient(168deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 30%, transparent 50%),
-    /* brushed metal body */
-    linear-gradient(180deg, #35353d 0%, #28282e 40%, #1f1f24 100%);
-
-  /* ── Border for edge definition ─── */
-  border:0.5px solid rgba(255,255,255,0.08);
-  border-bottom-color:rgba(0,0,0,0.4);
-
+  background:var(--bg);
   box-shadow:
-    /* ── 3D bottom edge (the key "wall") ─── */
-    0 3px 0 0 #19191d,
-    0 5px 0 0 #111114,
-    0 6px 0 0 #0a0a0c,
-    /* ── Contact shadow ─── */
-    0 8px 20px rgba(0,0,0,0.6),
-    0 4px 8px rgba(0,0,0,0.4),
-    0 12px 40px rgba(0,0,0,0.25),
-    /* ── Inner: top highlight ─── */
-    inset 0 1px 0 rgba(255,255,255,0.1),
-    inset 0 2px 4px rgba(255,255,255,0.03),
-    /* ── Inner: side bevels ─── */
-    inset 1px 0 0 rgba(255,255,255,0.05),
-    inset -1px 0 0 rgba(255,255,255,0.05),
-    /* ── Inner: bottom dark recessed edge ─── */
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    inset 0 -3px 6px rgba(0,0,0,0.15);
-}
-
-/* ── Concave dish surface (::before) ─── */
-.hero-key::before{
-  content:'';
-  position:absolute;
-  inset:4px 4px 5px;
-  border-radius:10px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(40,40,48,0.6) 0%, rgba(28,28,34,0.8) 100%);
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.06),
-    inset 0 -1px 3px rgba(0,0,0,0.2);
-  pointer-events:none;
-}
-
-/* ── Shine reflection (::after) ─── */
-.hero-key::after{
-  content:'';
-  position:absolute;
-  top:3px;left:15%;right:15%;
-  height:40%;
-  border-radius:8px 8px 50% 50%;
-  background:linear-gradient(180deg, rgba(255,255,255,0.09) 0%, transparent 100%);
-  pointer-events:none;
-}
-
-.hero-key:hover{
-  transform:rotateX(4deg) translateY(-3px);
-  box-shadow:
-    0 5px 0 0 #19191d,
-    0 7px 0 0 #111114,
-    0 8px 0 0 #0a0a0c,
-    0 12px 30px rgba(0,0,0,0.65),
-    0 6px 12px rgba(0,0,0,0.45),
-    0 16px 50px rgba(0,0,0,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    inset 0 2px 4px rgba(255,255,255,0.04),
-    inset 1px 0 0 rgba(255,255,255,0.06),
-    inset -1px 0 0 rgba(255,255,255,0.06),
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    inset 0 -3px 6px rgba(0,0,0,0.15);
+    -3px -2px 4px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(0,0,0,0.3),
+    0.5px 0.5px 0.5px rgba(0,0,0,0.4) inset,
+    -1px -1px 0.5px rgba(255,255,255,0.04) inset;
+  -webkit-appearance:none;appearance:none;
+  border:none;outline:none;
+  -webkit-tap-highlight-color:transparent;
 }
 
 .hero-key:active,.hero-key.pressed{
-  transform:rotateX(4deg) translateY(3px);
   box-shadow:
-    0 1px 0 0 #19191d,
-    0 1px 0 0 #111114,
-    0 2px 8px rgba(0,0,0,0.5),
-    0 1px 3px rgba(0,0,0,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    inset 0 2px 8px rgba(0,0,0,0.15),
-    inset 0 -1px 0 rgba(0,0,0,0.2);
-  transition-duration:0.06s;
+    0 0 2px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(0,0,0,0.4),
+    0 -0.5px 0 rgba(0,0,0,0.5) inset,
+    -0.5px -1.5px 0.5px rgba(255,255,255,0.04) inset;
+  transition-duration:0.05s;
 }
 
-/* ── Accent key (D) ─── */
+.hero-key:active .hero-key-inner,
+.hero-key.pressed .hero-key-inner{
+  transform:translateY(-1px);
+}
+
+/* ── D key — same tone as symbols ─── */
 .hero-key--accent{
-  color:#fff;font-weight:700;font-size:22px;
-  letter-spacing:-0.01em;
-  background:
-    linear-gradient(168deg, rgba(124,108,255,0.12) 0%, rgba(124,108,255,0.02) 30%, transparent 50%),
-    linear-gradient(180deg, #35353d 0%, #28282e 40%, #1f1f24 100%);
-  box-shadow:
-    0 3px 0 0 #19191d,
-    0 5px 0 0 #111114,
-    0 6px 0 0 #0a0a0c,
-    0 8px 20px rgba(0,0,0,0.6),
-    0 4px 8px rgba(0,0,0,0.4),
-    0 6px 32px rgba(124,108,255,0.12),
-    0 12px 40px rgba(0,0,0,0.25),
-    inset 0 1px 0 rgba(255,255,255,0.1),
-    inset 0 2px 4px rgba(255,255,255,0.03),
-    inset 1px 0 0 rgba(255,255,255,0.05),
-    inset -1px 0 0 rgba(255,255,255,0.05),
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    inset 0 -3px 6px rgba(0,0,0,0.15);
+  color:rgba(255,255,255,0.5);font-weight:600;font-size:18px;
 }
 
-.hero-key--accent:hover{
-  box-shadow:
-    0 5px 0 0 #19191d,
-    0 7px 0 0 #111114,
-    0 8px 0 0 #0a0a0c,
-    0 12px 30px rgba(0,0,0,0.65),
-    0 6px 12px rgba(0,0,0,0.45),
-    0 8px 40px rgba(124,108,255,0.2),
-    0 16px 50px rgba(0,0,0,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    inset 0 2px 4px rgba(255,255,255,0.04),
-    inset 1px 0 0 rgba(255,255,255,0.06),
-    inset -1px 0 0 rgba(255,255,255,0.06),
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    inset 0 -3px 6px rgba(0,0,0,0.15);
-}
-
-/* ── Lit state — purple glow on click ─── */
+/* ── Lit state ─── */
 .hero-key.lit{
-  background:
-    linear-gradient(168deg, rgba(124,108,255,0.18) 0%, rgba(124,108,255,0.04) 35%, transparent 55%),
-    linear-gradient(180deg, #38353f 0%, #2a282e 40%, #201f24 100%);
-  border-color:rgba(124,108,255,0.15);
+  background:var(--bg);
   box-shadow:
-    0 3px 0 0 #19191d,
-    0 5px 0 0 #111114,
-    0 6px 0 0 #0a0a0c,
-    0 8px 20px rgba(0,0,0,0.6),
-    0 0 30px rgba(124,108,255,0.3),
-    0 0 60px rgba(124,108,255,0.12),
-    0 0 10px rgba(124,108,255,0.15),
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    inset 0 2px 4px rgba(124,108,255,0.05),
-    inset 1px 0 0 rgba(255,255,255,0.06),
-    inset -1px 0 0 rgba(255,255,255,0.06),
-    inset 0 -3px 6px rgba(0,0,0,0.15);
-  color:var(--accent);
-  transition-duration:0.06s;
-}
-.hero-key--accent.lit{color:#fff}
-
-.hero-key-label{
-  font-size:11px;font-weight:500;
-  letter-spacing:0.02em;
+    -3px -2px 4px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(0,0,0,0.3),
+    0 0 12px rgba(255,255,255,0.06),
+    0 0 3px rgba(255,255,255,0.04),
+    0.5px 0.5px 0.5px rgba(0,0,0,0.4) inset,
+    -1px -1px 0.5px rgba(255,255,255,0.04) inset;
+  color:rgba(255,255,255,0.85);
+  transition-duration:0.05s;
 }
 
 .hero-key-plus{
-  font-size:15px;font-weight:500;
-  color:rgba(255,255,255,0.2);
+  font-size:13px;font-weight:400;
+  color:rgba(255,255,255,0.12);
+  padding:0 2px;
 }
 
-.hero-keys-caption{
-  text-align:center;
-  font-size:12px;color:var(--text-tertiary);
-  margin-top:-28px;margin-bottom:36px;
+@media(max-width:768px){
+  .hero-wire{height:80px}
 }
-
 @media(max-width:480px){
-  .hero-keys{gap:8px}
-  .hero-key{min-width:50px;height:46px;padding:0 12px;font-size:16px;border-radius:11px}
-  .hero-key--accent{font-size:18px}
-  .hero-key-plus{font-size:13px}
+  .hero-keyboard{padding:8px 10px;gap:4px;border-radius:12px}
+  .hero-key{min-width:46px;height:42px;padding:0 10px;font-size:15px;border-radius:7px}
+  .hero-key--accent{font-size:17px}
+  .hero-key-plus{font-size:11px}
+  .hero-wire{height:60px;width:5px}
 }
 
 /* ══════════════════════════════════════════════════
@@ -419,25 +366,20 @@ nav .inner{
   padding:80px 0;
 }
 
-.shortcuts-section::before{
-  content:'';position:absolute;top:0;left:50%;
-  width:800px;height:500px;
-  transform:translateX(-50%);
-  background:radial-gradient(ellipse,rgba(124,108,255,0.05) 0%,transparent 70%);
-  pointer-events:none;
-}
+.shortcuts-section::before{display:none}
 
 .section-label{
   display:inline-flex;align-items:center;gap:6px;
   font-size:11px;font-weight:600;text-transform:uppercase;
-  letter-spacing:0.08em;color:var(--accent);
+  letter-spacing:0.08em;color:var(--text-tertiary);
   margin-bottom:12px;
 }
 
 .section-title{
   font-size:clamp(24px,3.5vw,36px);
-  font-weight:700;letter-spacing:-0.02em;
+  font-weight:700;letter-spacing:-0.025em;
   margin-bottom:16px;
+  text-shadow:0 1px 2px rgba(0,0,0,0.15);
 }
 
 .section-desc{
@@ -452,18 +394,19 @@ nav .inner{
 }
 
 .shortcut-card{
-  background:var(--bg-elevated);
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
   border-radius:var(--radius-outer);
   padding:28px 20px;
   text-align:center;
-  box-shadow:var(--shadow-sm),inset 0 0 0 0.5px rgba(255,255,255,0.04);
-  transition:transform 0.2s var(--ease-out),box-shadow 0.2s ease;
+  transition:transform 0.2s var(--ease-out),border-color 0.2s ease,background 0.2s ease;
   cursor:default;
 }
 
 .shortcut-card:hover{
   transform:translateY(-3px);
-  box-shadow:var(--shadow-md),inset 0 0 0 0.5px rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.045);
+  border-color:rgba(255,255,255,0.08);
 }
 
 /* ── CSS Keyboard Keys ─── */
@@ -473,40 +416,36 @@ nav .inner{
 .key{
   width:44px;height:40px;
   display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(to bottom,#2a2a30,#1e1e22);
+  background:var(--bg);
+  border:none;
   border-radius:8px;
   font-size:15px;font-weight:500;
-  color:var(--text-secondary);
+  color:rgba(255,255,255,0.5);
   box-shadow:
-    0 1px 0 1px rgba(0,0,0,0.5),
-    0 4px 8px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.07),
-    inset 0 -1px 0 rgba(0,0,0,0.3);
+    -3px -2px 4px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(0,0,0,0.3),
+    0.5px 0.5px 0.5px rgba(0,0,0,0.4) inset,
+    -1px -1px 0.5px rgba(255,255,255,0.04) inset;
   transition:transform 0.18s var(--ease-out),box-shadow 0.18s ease;
   user-select:none;
 }
 
 .key-letter{
-  font-size:16px;font-weight:700;
-  color:var(--text-primary);
+  font-size:16px;font-weight:600;
+  color:rgba(255,255,255,0.5);
 }
 
 .shortcut-card:hover .key{transform:translateY(-2px)}
 
-.shortcut-card:hover .key-letter.key-purple{
-  box-shadow:
-    0 1px 0 1px rgba(0,0,0,0.5),
-    0 6px 16px rgba(124,108,255,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.07),
-    inset 0 -1px 0 rgba(0,0,0,0.3);
-}
-
+.shortcut-card:hover .key-letter.key-purple,
 .shortcut-card:hover .key-letter.key-teal{
+  color:rgba(255,255,255,0.8);
   box-shadow:
-    0 1px 0 1px rgba(0,0,0,0.5),
-    0 6px 16px rgba(45,212,191,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.07),
-    inset 0 -1px 0 rgba(0,0,0,0.3);
+    -3px -2px 4px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(0,0,0,0.3),
+    0 0 10px rgba(255,255,255,0.05),
+    0.5px 0.5px 0.5px rgba(0,0,0,0.4) inset,
+    -1px -1px 0.5px rgba(255,255,255,0.04) inset;
 }
 
 .shortcut-name{
@@ -526,14 +465,7 @@ nav .inner{
   position:relative;
 }
 
-.mockup-section::before{
-  content:'';position:absolute;
-  top:50%;left:50%;width:500px;height:400px;
-  transform:translate(-50%,-50%);
-  background:radial-gradient(ellipse,rgba(124,108,255,0.1) 0%,transparent 60%);
-  pointer-events:none;
-  filter:blur(40px);
-}
+.mockup-section::before{display:none}
 
 .mockup-wrapper{
   position:relative;
@@ -549,9 +481,9 @@ nav .inner{
   width:420px;
   background:var(--bg);
   border-radius:var(--radius-outer);
-  box-shadow:var(--shadow-lg),0 0 60px rgba(124,108,255,0.08);
+  box-shadow:0 4px 24px rgba(0,0,0,0.3),0 1px 4px rgba(0,0,0,0.2);
   overflow:hidden;
-  border:0.5px solid rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.05);
 }
 
 /* Mockup Title Bar */
@@ -661,25 +593,26 @@ nav .inner{
 }
 
 .feature-card{
-  background:var(--bg-elevated);
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
   border-radius:var(--radius-outer);
   padding:28px;
-  box-shadow:var(--shadow-sm),inset 0 0 0 0.5px rgba(255,255,255,0.04);
-  transition:transform 0.2s var(--ease-out),box-shadow 0.2s ease;
+  transition:transform 0.2s var(--ease-out),border-color 0.2s ease,background 0.2s ease;
 }
 
 .feature-card:hover{
   transform:translateY(-2px);
-  box-shadow:var(--shadow-md),inset 0 0 0 0.5px rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.045);
+  border-color:rgba(255,255,255,0.08);
 }
 
 .feature-dot{
   width:8px;height:8px;border-radius:50%;
   margin-bottom:16px;
 }
-.feature-dot.purple{background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
-.feature-dot.teal{background:var(--teal);box-shadow:0 0 10px var(--teal-glow)}
-.feature-dot.green{background:var(--success);box-shadow:0 0 10px rgba(61,214,140,0.2)}
+.feature-dot.purple,.feature-dot.teal,.feature-dot.green{
+  background:rgba(255,255,255,0.2);box-shadow:none;
+}
 
 .feature-card h3{
   font-size:15px;font-weight:600;
@@ -698,34 +631,42 @@ nav .inner{
 .steps-section{padding:80px 0}
 
 .steps{
-  display:flex;gap:24px;
-  position:relative;
+  display:flex;gap:16px;
   margin-top:48px;
 }
 
-.steps::before{
-  content:'';position:absolute;
-  top:22px;left:60px;right:60px;
-  height:1px;
-  border-top:1px dashed rgba(255,255,255,0.08);
+.step{
+  flex:1;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:var(--radius-outer);
+  padding:24px 20px;
+  transition:transform 0.2s var(--ease-out),border-color 0.2s ease,background 0.2s ease;
 }
 
-.step{flex:1;text-align:center;position:relative}
+.step:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,0.045);
+  border-color:rgba(255,255,255,0.08);
+}
 
 .step-number{
-  width:44px;height:44px;
-  border-radius:50%;
-  background:var(--accent);
-  color:white;
+  width:36px;height:36px;
+  border-radius:9px;
+  background:var(--bg);
+  color:var(--text-secondary);
   display:inline-flex;align-items:center;justify-content:center;
-  font-size:16px;font-weight:700;
+  font-size:14px;font-weight:700;
   margin-bottom:16px;
-  box-shadow:0 2px 12px var(--accent-glow);
-  position:relative;z-index:1;
+  box-shadow:
+    -2px -1px 3px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(0,0,0,0.3),
+    0.5px 0.5px 0.5px rgba(0,0,0,0.4) inset,
+    -0.5px -0.5px 0.5px rgba(255,255,255,0.04) inset;
 }
 
 .step h3{font-size:15px;font-weight:600;margin-bottom:6px}
-.step p{font-size:13px;color:var(--text-secondary);max-width:220px;margin:0 auto}
+.step p{font-size:13px;color:var(--text-secondary);line-height:1.55}
 
 /* ══════════════════════════════════════════════════
    DOWNLOAD CTA
@@ -737,13 +678,7 @@ nav .inner{
   position:relative;
 }
 
-.cta-section::before{
-  content:'';position:absolute;
-  bottom:0;left:50%;width:600px;height:300px;
-  transform:translateX(-50%);
-  background:radial-gradient(ellipse,rgba(124,108,255,0.06) 0%,transparent 70%);
-  pointer-events:none;
-}
+.cta-section::before{display:none}
 
 .cta-section h2{
   font-size:clamp(24px,3.5vw,36px);
@@ -765,9 +700,8 @@ nav .inner{
   text-align:left;
   padding:16px 18px;
   border-radius:var(--radius-inner);
-  background:var(--surface);
-  border:1px solid rgba(255,255,255,0.06);
-  box-shadow:var(--shadow-sm);
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
 }
 .first-launch-note h3{
   font-size:12px;font-weight:600;color:var(--text-tertiary);
@@ -784,10 +718,10 @@ nav .inner{
 .fln-icon{
   width:28px;height:28px;min-width:28px;
   border-radius:8px;
-  background:var(--accent-dim);
+  background:rgba(255,255,255,0.05);
   display:flex;align-items:center;justify-content:center;
 }
-.fln-icon svg{width:14px;height:14px;color:var(--accent)}
+.fln-icon svg{width:14px;height:14px;color:var(--text-secondary)}
 .fln-text{font-size:12.5px;line-height:1.5;color:var(--text-secondary);padding-top:4px}
 .fln-text strong{color:var(--text-primary);font-weight:600}
 
@@ -801,7 +735,7 @@ footer{
   border-top:1px solid rgba(255,255,255,0.04);
 }
 
-footer a{color:var(--accent);text-decoration:none}
+footer a{color:var(--text-secondary);text-decoration:none}
 footer a:hover{text-decoration:underline}
 
 /* ══════════════════════════════════════════════════
@@ -862,12 +796,22 @@ footer a:hover{text-decoration:underline}
 <!-- ════════ HERO ════════ -->
 <section class="hero">
   <div class="container">
-    <div class="hero-keys" data-animate="1">
-      <div class="hero-key" id="hk-cmd">&#8984;</div>
-      <span class="hero-key-plus">+</span>
-      <div class="hero-key" id="hk-shift">&#8679;</div>
-      <span class="hero-key-plus">+</span>
-      <div class="hero-key hero-key--accent" id="hk-letter">D</div>
+    <div class="hero-keyboard-wrap" data-animate="1">
+      <svg class="hero-cable-svg" id="hero-cable-svg" aria-hidden="true">
+        <path id="hero-cable-path" class="hero-cable-body" fill="none" stroke="var(--bg-elevated)" stroke-width="6" stroke-linecap="round"/>
+        <path id="hero-cable-edge" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div class="hero-cable-dots" id="hero-cable-dots">
+        <div class="hero-cable-dot"></div>
+        <div class="hero-cable-dot"></div>
+        <div class="hero-cable-dot"></div>
+        <div class="hero-cable-dot"></div>
+      </div>
+      <div class="hero-keyboard" id="hero-keyboard">
+        <button class="hero-key" id="hk-cmd" type="button">&#8984;</button>
+        <button class="hero-key" id="hk-shift" type="button">&#8679;</button>
+        <button class="hero-key hero-key--accent" id="hk-letter" type="button">D</button>
+      </div>
     </div>
 
     <h1 data-animate="2">
@@ -1148,8 +1092,152 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-// Hero keys — sequential press animation on load + click interaction
+// ── Hero keyboard drag + spring cable ──────────────────────
 (function(){
+  const kb = document.getElementById('hero-keyboard');
+  const svg = document.getElementById('hero-cable-svg');
+  const cablePath = document.getElementById('hero-cable-path');
+  const cableEdge = document.getElementById('hero-cable-edge');
+  const dotsWrap = document.getElementById('hero-cable-dots');
+  const dots = dotsWrap ? dotsWrap.querySelectorAll('.hero-cable-dot') : [];
+  if(!kb || !cablePath) return;
+
+  let isDragging = false;
+  let offsetX = 0, offsetY = 0;
+  let velX = 0, velY = 0;
+  let dragStartX, dragStartY;
+  let kbStartX, kbStartY;
+  let animFrame;
+
+  const SPRING = 0.08;
+  const DAMPING = 0.75;
+  const THRESHOLD = 0.3;
+
+  function updateCable(){
+    const wrap = kb.closest('.hero-keyboard-wrap');
+    if(!wrap) return;
+    const svgEl = document.getElementById('hero-cable-svg');
+    const wrapRect = wrap.getBoundingClientRect();
+    const kbRect = kb.getBoundingClientRect();
+    const svgRect = svgEl.getBoundingClientRect();
+
+    // Anchor: top center of SVG (where wire enters from top of screen)
+    const ax = wrapRect.width / 2;
+    const ay = 0;
+
+    // Target: top center of keyboard, in SVG coordinates
+    // SVG starts 160px above the wrap (top:-160px)
+    const svgOffset = 160;
+    const tx = ax + offsetX;
+    const ty = svgOffset + offsetY;
+
+    // Cable sag — increases with distance pulled
+    const dx = tx - ax;
+    const dy = ty - ay;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const sag = Math.max(15, dist * 0.08 + Math.abs(dx) * 0.15);
+
+    // Bezier curve with natural gravity droop
+    const cp1x = ax + dx * 0.05;
+    const cp1y = ay + dy * 0.5 + sag;
+    const cp2x = tx - dx * 0.05;
+    const cp2y = ty - dy * 0.15 + sag * 0.2;
+
+    const d = `M${ax},${ay} C${cp1x},${cp1y} ${cp2x},${cp2y} ${tx},${ty}`;
+    cablePath.setAttribute('d', d);
+    if(cableEdge) cableEdge.setAttribute('d', d);
+
+    // Position dots along the cable path
+    if(dots.length && cablePath.getTotalLength){
+      const len = cablePath.getTotalLength();
+      const now = Date.now();
+      dots.forEach((dot,i) => {
+        const t = ((now / 1500 + i * 0.25) % 1);
+        const pt = cablePath.getPointAtLength(t * len);
+        dot.style.transform = `translate(${pt.x - 2}px, ${pt.y - 2}px)`;
+      });
+    }
+  }
+
+  // Dots animation loop
+  let dotsFrame;
+  function animateDots(){
+    updateCable();
+    dotsFrame = requestAnimationFrame(animateDots);
+  }
+  animateDots();
+
+  function applyTransform(){
+    kb.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    updateCable();
+  }
+
+  // Spring animation loop
+  function springBack(){
+    const ax = -SPRING * offsetX;
+    const ay = -SPRING * offsetY;
+    velX = (velX + ax) * DAMPING;
+    velY = (velY + ay) * DAMPING;
+    offsetX += velX;
+    offsetY += velY;
+
+    applyTransform();
+
+    if(Math.abs(offsetX) > THRESHOLD || Math.abs(offsetY) > THRESHOLD ||
+       Math.abs(velX) > THRESHOLD || Math.abs(velY) > THRESHOLD){
+      animFrame = requestAnimationFrame(springBack);
+    } else {
+      offsetX = 0; offsetY = 0;
+      applyTransform();
+    }
+  }
+
+  function onPointerDown(e){
+    if(e.target.closest('.hero-key')) return; // let key clicks through
+    e.preventDefault();
+    isDragging = true;
+    cancelAnimationFrame(animFrame);
+    kb.classList.add('dragging');
+
+    const pt = e.touches ? e.touches[0] : e;
+    dragStartX = pt.clientX;
+    dragStartY = pt.clientY;
+    kbStartX = offsetX;
+    kbStartY = offsetY;
+  }
+
+  function onPointerMove(e){
+    if(!isDragging) return;
+    e.preventDefault();
+    const pt = e.touches ? e.touches[0] : e;
+    offsetX = kbStartX + (pt.clientX - dragStartX);
+    offsetY = kbStartY + (pt.clientY - dragStartY);
+    applyTransform();
+  }
+
+  function onPointerUp(){
+    if(!isDragging) return;
+    isDragging = false;
+    kb.classList.remove('dragging');
+    velX = 0; velY = 0;
+    animFrame = requestAnimationFrame(springBack);
+  }
+
+  // Mouse events
+  kb.addEventListener('mousedown', onPointerDown);
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('mouseup', onPointerUp);
+
+  // Touch events
+  kb.addEventListener('touchstart', onPointerDown, {passive:false});
+  window.addEventListener('touchmove', onPointerMove, {passive:false});
+  window.addEventListener('touchend', onPointerUp);
+
+  // Initial cable
+  updateCable();
+
+
+  // ── Key press animations ──
   const keys = ['hk-cmd','hk-shift','hk-letter'];
 
   function playSequence(){
@@ -1165,9 +1253,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   playSequence();
   setInterval(playSequence, 5000);
 
-  // Click to light up
+  // Mouse click to light up
   document.querySelectorAll('.hero-key').forEach(key => {
-    key.addEventListener('mousedown', () => {
+    key.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
       key.classList.add('pressed','lit');
     });
     key.addEventListener('mouseup', () => {
@@ -1177,6 +1266,30 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     key.addEventListener('mouseleave', () => {
       key.classList.remove('pressed','lit');
     });
+  });
+
+  // Real keyboard presses light up matching keys
+  const keyMap = {
+    'Meta': 'hk-cmd',
+    'Control': 'hk-cmd',
+    'Shift': 'hk-shift',
+    'd': 'hk-letter',
+    'D': 'hk-letter'
+  };
+  window.addEventListener('keydown', (e) => {
+    const id = keyMap[e.key];
+    if(!id) return;
+    const el = document.getElementById(id);
+    if(el) el.classList.add('pressed','lit');
+  });
+  window.addEventListener('keyup', (e) => {
+    const id = keyMap[e.key];
+    if(!id) return;
+    const el = document.getElementById(id);
+    if(el){
+      el.classList.remove('pressed');
+      setTimeout(() => el.classList.remove('lit'), 200);
+    }
   });
 })();
 </script>
