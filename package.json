@@ -23,6 +23,7 @@
     "asar": true,
     "compression": "maximum",
     "mac": {
+      "artifactName": "${productName}-Mac-${arch}.${ext}",
       "category": "public.app-category.productivity",
       "icon": "assets/icon.icns",
       "target": [

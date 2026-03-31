@@ -22,6 +22,7 @@ process.on("uncaughtException", (err) => {
 });
 
 const store = new Store({
+  projectName: "writeai",
   defaults: {
     apiKey: "",
     shortcut: "CommandOrControl+Shift+Space",
