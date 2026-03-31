@@ -563,29 +563,35 @@ nav .inner{
 
 .first-launch-note{
   margin:28px auto 0;
-  max-width:520px;
+  max-width:480px;
   text-align:left;
-  padding:18px 20px;
+  padding:16px 18px;
   border-radius:var(--radius-inner);
   background:var(--surface);
   border:1px solid rgba(255,255,255,0.06);
   box-shadow:var(--shadow-sm);
 }
 .first-launch-note h3{
-  font-size:13px;font-weight:600;color:var(--text-primary);
-  margin-bottom:10px;letter-spacing:-0.01em;
+  font-size:12px;font-weight:600;color:var(--text-tertiary);
+  margin-bottom:12px;letter-spacing:0.04em;text-transform:uppercase;
 }
-.first-launch-note p{
-  font-size:13px;line-height:1.55;color:var(--text-secondary);
-  margin-bottom:12px;
+.fln-steps{display:flex;flex-direction:column;gap:0}
+.fln-step{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
 }
-.first-launch-note p:last-child{margin-bottom:0}
-.first-launch-note ol{
-  margin:0 0 0 1.1em;padding:0;
-  font-size:13px;line-height:1.65;color:var(--text-secondary);
+.fln-step:last-child{border-bottom:none;padding-bottom:0}
+.fln-step:first-child{padding-top:0}
+.fln-icon{
+  width:28px;height:28px;min-width:28px;
+  border-radius:8px;
+  background:var(--accent-dim);
+  display:flex;align-items:center;justify-content:center;
 }
-.first-launch-note li{margin-bottom:6px}
-.first-launch-note li:last-child{margin-bottom:0}
+.fln-icon svg{width:14px;height:14px;color:var(--accent)}
+.fln-text{font-size:12.5px;line-height:1.5;color:var(--text-secondary);padding-top:4px}
+.fln-text strong{color:var(--text-primary);font-weight:600}
 
 /* ══════════════════════════════════════════════════
    FOOTER
@@ -887,12 +893,21 @@ footer a:hover{text-decoration:underline}
     </div>
     <div class="first-launch-note" data-animate="4" id="first-open-mac">
       <h3>First open on Mac</h3>
-      <p>macOS may say the app can’t be verified. That’s normal for small open-source apps that aren’t notarized. You can still run it:</p>
-      <ol>
-        <li>Unzip and move <strong style="color:var(--text-primary)">WriteAI</strong> to <strong style="color:var(--text-primary)">Applications</strong>.</li>
-        <li><strong style="color:var(--text-primary)">Control-click</strong> the app → <strong style="color:var(--text-primary)">Open</strong> → then click <strong style="color:var(--text-primary)">Open</strong> in the dialog. (Use Open—not double-click—the first time.)</li>
-        <li>If it was blocked already: <strong style="color:var(--text-primary)">System Settings</strong> → <strong style="color:var(--text-primary)">Privacy &amp; Security</strong> → scroll to <strong style="color:var(--text-primary)">Security</strong> and choose <strong style="color:var(--text-primary)">Open Anyway</strong> for WriteAI.</li>
-      </ol>
+      <p>macOS may show a security warning — this is normal for open-source apps. It only takes a few seconds to allow it:</p>
+      <div class="fln-steps">
+        <div class="fln-step">
+          <div class="fln-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 9v4H3V9"/><path d="M5.5 5.5L8 3l2.5 2.5"/><path d="M8 3v7.5"/></svg></div>
+          <div class="fln-text"><strong>Move to Applications</strong> after unzipping.</div>
+        </div>
+        <div class="fln-step">
+          <div class="fln-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v10"/><path d="M3 8h10"/><circle cx="8" cy="8" r="6"/></svg></div>
+          <div class="fln-text"><strong>Control-click</strong> → Open → Open again.</div>
+        </div>
+        <div class="fln-step">
+          <div class="fln-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1v3"/><path d="M12.24 3.76l-2.12 2.12"/><path d="M15 8h-3"/><path d="M12.24 12.24l-2.12-2.12"/><path d="M8 15v-3"/><path d="M3.76 12.24l2.12-2.12"/><path d="M1 8h3"/><path d="M3.76 3.76l2.12 2.12"/></svg></div>
+          <div class="fln-text"><strong>If blocked:</strong> Settings → Privacy &amp; Security → Open Anyway.</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
