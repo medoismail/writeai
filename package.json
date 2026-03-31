@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --dev",
-    "build": "electron-builder --mac",
+    "build": "echo 'Static site - no build needed'",
+    "build:app": "electron-builder --mac",
     "build:all": "electron-builder --mac --win"
   },
   "keywords": ["writing", "ai", "assistant", "english"],
