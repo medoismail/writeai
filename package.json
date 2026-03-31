@@ -1,0 +1,49 @@
+{
+  "name": "writeai",
+  "version": "1.0.0",
+  "description": "Always-on AI writing assistant for better English",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder --mac",
+    "build:all": "electron-builder --mac --win"
+  },
+  "keywords": ["writing", "ai", "assistant", "english"],
+  "author": "medoismail",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/medoismail/writeai"
+  },
+  "build": {
+    "appId": "design.medoismail.writeai",
+    "productName": "WriteAI",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "assets/icon.icns",
+      "target": ["dmg", "zip"]
+    },
+    "dmg": {
+      "title": "WriteAI",
+      "backgroundColor": "#111113"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "assets/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "dependencies": {
+    "electron-store": "^11.0.2"
+  },
+  "devDependencies": {
+    "electron": "^41.1.0",
+    "electron-builder": "^25.1.8"
+  }
+}

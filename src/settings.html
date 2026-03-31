@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WriteAI Settings</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="settings-window">
+      <!-- Title bar -->
+      <header class="titlebar">
+        <div class="titlebar-left">
+          <div class="app-icon" aria-hidden="true">W</div>
+          <span class="app-name">Settings</span>
+        </div>
+        <div class="titlebar-right">
+          <button class="titlebar-btn close-btn" id="closeBtn" aria-label="Close settings">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+              <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Settings form -->
+      <form class="settings-content" id="settingsForm">
+        <div class="settings-group">
+          <label class="settings-label" for="apiKeyInput">OpenAI API Key</label>
+          <input
+            type="password"
+            class="settings-input"
+            id="apiKeyInput"
+            placeholder="sk-..."
+            spellcheck="false"
+            autocomplete="off"
+          />
+          <p class="settings-hint">
+            Get your key at
+            <a href="#" id="openaiLink">platform.openai.com/api-keys</a>
+          </p>
+        </div>
+
+        <div class="settings-group">
+          <label class="settings-label" for="modelSelect">Model</label>
+          <select class="settings-select" id="modelSelect">
+            <option value="gpt-4o-mini">GPT-4o Mini (Fast & Cheap)</option>
+            <option value="gpt-4o">GPT-4o (Best Quality)</option>
+            <option value="gpt-4.1-mini">GPT-4.1 Mini</option>
+            <option value="gpt-4.1">GPT-4.1</option>
+          </select>
+          <p class="settings-hint">
+            GPT-4o Mini is recommended for fast responses at low cost.
+          </p>
+        </div>
+
+        <button type="submit" class="save-btn" id="saveBtn">Save Settings</button>
+        <div class="save-status" id="saveStatus" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <script src="settings.js"></script>
+  </body>
+</html>
